@@ -1,0 +1,5 @@
+__pycache__
+data/
+*.csv
+bdh/
+spark-warehouse
