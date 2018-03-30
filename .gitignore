@@ -1,5 +1,7 @@
 __pycache__
+*.pyc
 data/
 *.csv
 bdh/
 spark-warehouse
+
