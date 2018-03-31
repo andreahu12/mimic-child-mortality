@@ -100,7 +100,7 @@ visits_cpt = visits_cpt.keyBy(lambda cpt: cpt[0]).map(lambda c: (c[0], (c[1][1])
 #print(visits_notes.first())
 
 # for now, we are just using a pandas-computed lda featureset
-visits_lda = lda_events.keyBy(lambda l: l.ICUSTAY_ID).map(lambda l: (l[1].ICUSTAY_ID, [l[1][2:]]))
+visits_lda = lda_events.keyBy(lambda l: l.ICUSTAY_ID).map(lambda l: (l[1].ICUSTAY_ID, list(l[1][2:])))
 num_topics = len(visits_lda.first()[1])
 visits_nonotes = visit_ids.subtract(visits_lda.map(lambda l: l[0]))
 visits_nonotes = visits_nonotes.map(lambda l: (l, [0] * num_topics))
