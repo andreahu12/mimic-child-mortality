@@ -92,13 +92,6 @@ visits_cpt = children_data.leftOuterJoin(cpt_events.keyBy(lambda cpt: cpt.SUBJEC
 visits_cpt = visits_cpt.map(lambda cpt: (cpt[1][0][1].ICUSTAY_ID, cpt[1][1].CPT_CD if cpt[1][1] else None)).groupByKey().mapValues(lambda v: len([cpt for cpt in v if cpt]))
 visits_cpt = visits_cpt.keyBy(lambda cpt: cpt[0]).map(lambda c: (c[0], (c[1][1])))
 
-# LDA FEATURE - this will be run on the server post-draft
-# this computes lda for notes
-#visits_notes = children_data.leftOuterJoin(note_events.keyBy(lambda note: note.SUBJECT_ID)).filter(lambda n: not n[1][1] or is_between_notes(n[1][1].CHARTDATE, n[1][0][1].INTIME, n[1][0][1].OUTTIME))
-#visits_notes = visits_notes.map(lambda notes: (notes[1][0][1].ICUSTAY_ID, vectorize_text_feature(notes[1][1].TEXT) if notes[1][1] else None))
-#print(visits_notes.count())
-#print(visits_notes.first())
-
 # for now, we are just using a pandas-computed lda featureset
 visits_lda = lda_events.keyBy(lambda l: l.ICUSTAY_ID).map(lambda l: (l[1].ICUSTAY_ID, list(l[1][2:])))
 num_topics = len(visits_lda.first()[1])
