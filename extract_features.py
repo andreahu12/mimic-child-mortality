@@ -113,7 +113,15 @@ visits_lab = visits_lab.union(visits_nolabs)
 # NOTE: features_RDD is an RDD of 8200 tuples of the form (ICUSTAY_ID, List[feats])
 # One instance looks like this:
 # (ICUSTAY_ID, [(age, gender), is_dead, cpt_event_Count, [1-hot-encoded lab_events], [LDA topic values]])
-features_RDD = visits_age_gender.groupWith(visits_is_dead, visits_cpt, visits_lab,visits_lda).mapValues(list).map(lambda r: (r[0], unpack(r[1])))
+features = visits_age_gender.groupWith(visits_is_dead, visits_cpt, visits_lab,visits_lda)
+features_RDD = features.mapValues(list).map(lambda r: (r[0], unpack(r[1])))
+newborns_RDD = features_RDD.filter(lambda p: p[1][0][0] <= 1)
+teens_RDD = features_RDD.filter(lambda p: p[1][0][0] >= 14)
 print(features_RDD.first())
+print(features_RDD.count())
+print(newborns_RDD.first())
+print(newborns_RDD.count())
+print(teens_RDD.first())
+print(teens_RDD.count())
 
 
