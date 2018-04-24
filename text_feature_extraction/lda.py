@@ -36,7 +36,7 @@ TODO: Change this method as necessary.
 These are the terms you'll analyze using LDA and will be grouped into components.
 """
 def load_terms(tfidf_dir, check_spelling=True):
-    print "loading terms"
+    print ("loading terms")
     start_time = time.time()
     terms = set()
     # TODO: @ Francisco CUSTOMIZE THIS
@@ -72,9 +72,9 @@ def load_terms(tfidf_dir, check_spelling=True):
                 if num_terms_for_file > 499:
                     break
     terms = list(terms)
-    print "num terms:", len(terms)
+    print ("num terms:", len(terms))
     end_time = time.time()
-    print "minutes to load terms:", float(end_time - start_time) / 60
+    print ("minutes to load terms:", float(end_time - start_time) / 60)
     # print terms
     # raise Exception("you shall not pass")
     return terms
@@ -85,7 +85,7 @@ Returns: 2D list of vectors. Each vector represents a post.
 Value at each index i is if the post contains the term at index i in the term list.
 """
 def vectorize_for_lda(path, term_list, output, check_spelling=True):
-    print "vectorizing"
+    print ("vectorizing")
     start_time = time.time()
     vectored_posts = []
 
@@ -116,14 +116,14 @@ def vectorize_for_lda(path, term_list, output, check_spelling=True):
         writer = csv.writer(outfile)
         writer.writerows(vectored_posts)
     end_time = time.time()
-    print "minutes to vectorize:", float(end_time - start_time) / 60
+    print ("minutes to vectorize:", float(end_time - start_time) / 60)
     return vectored_posts
 
 def strlist_to_intlist(strlist):
     return [int(i) for i in strlist]
 
 def load_vectorized_icustays(filepath='vectorized-icustays-spellchecked.csv'):
-    print "loading vectors"
+    print ("loading vectors")
     data = []
     with open(filepath, 'r') as infile:
         reader = csv.reader(infile)
@@ -132,23 +132,23 @@ def load_vectorized_icustays(filepath='vectorized-icustays-spellchecked.csv'):
 
 def tag_lda(vectorized_posts, post_json, n_components_list, term_list, \
                         check_spelling=True, write_path="lda/spell-checked/"):
-    print "lda"
+    print ("lda")
     for n in n_components_list:
-        print "lda with n components:", n
+        print ("lda with n components:", n)
         start_time = time.time()
         lda = LatentDirichletAllocation(n_components=n)
         X_new = lda.fit_transform(vectored_posts)
-        print "save components"
+        print ("save components")
         output_path = write_path + 'lda'+str(n)+'-components.csv'
         np.savetxt(output_path, lda.components_, delimiter=',')
         dist = lda.components_ / lda.components_.sum(axis=1)[:, np.newaxis]
         end_time = time.time()
-        print "minutes to save lda:", float(end_time - start_time) / 60
-    print "DONE!"
+        print ("minutes to save lda:", float(end_time - start_time) / 60)
+    print ("DONE!")
     return output_path
 
 def lda_component_terms(filename, term_list, n_top_words=100):
-    print "getting relevant components"
+    print ("getting relevant components")
     n_top_words = int(n_top_words)
     component_terms = []
     with open(filename, 'r') as f:
@@ -211,18 +211,18 @@ if __name__ == '__main__':
                         check_spelling=check_spelling, write_path="lda/no-spell-check/")
         read_folder = 'lda/'
     # print terms
-    print "vectorizing"
+    print ("vectorizing")
 
     # vectored_posts = load_vectorized_icustays(filepath=vect_location)
     # vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
 
     lda_component_path = read_folder + 'lda25-components.csv'
     components = lda_component_terms(lda_component_path, terms, n_top_words=100000000)
-    print components
+    print (components)
 
-    print "write components to categories.csv"
+    print ("write components to categories.csv")
     with open('categories.csv', 'w') as outfile:
         writer = csv.writer(outfile)
         for c in components:
             writer.writerow(c)
-    print "DONE!"
+    print ("DONE!")

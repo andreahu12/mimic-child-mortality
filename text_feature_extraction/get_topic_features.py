@@ -113,6 +113,6 @@ icustay_id_to_notes = icustay_id_to_notes[['ICUSTAY_ID', 'TOPIC0', 'TOPIC1', 'TO
     'TOPIC3', 'TOPIC4', 'TOPIC5', 'TOPIC6', 'TOPIC7', 'TOPIC8', 'TOPIC9', 'TOPIC10', \
     'TOPIC11', 'TOPIC12', 'TOPIC13', 'TOPIC14', 'TOPIC15', 'TOPIC16', 'TOPIC17']]
 
-print icustay_id_to_notes.describe()
+print(icustay_id_to_notes.describe())
 
 icustay_id_to_notes.to_csv('icustay_id_to_features.csv')

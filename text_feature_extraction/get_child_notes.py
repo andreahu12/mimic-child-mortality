@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import enchant
 import string
-from get_text_feature import vectorize_text_feature
+from get_text_feats import vectorize_text_feature
 import math
 
 d = enchant.Dict("en_US")
@@ -54,17 +54,17 @@ def get_child_notes_by_icustay(spell_check):
     SECONDS_IN_A_YEAR = 31536000.0
     DAYS_IN_A_YEAR = 365
 
-    print "loading icustays"
+    print("loading icustays")
     icustays = pd.read_csv(icustays_path)
-    print "loading noteevents"
+    print("loading noteevents")
     noteevents = pd.read_csv(noteevents_path)
-    print "loading patients"
+    print("loading patients")
     patients = pd.read_csv(patients_path)
 
-    print "joining icustays and patients"
+    print("joining icustays and patients")
     icustays_and_patients = icustays.merge(patients, left_on='SUBJECT_ID', right_on='SUBJECT_ID')
 
-    print "filtering for children"
+    print("filtering for children")
     icustays_and_patients['INTIME'] = pd.to_datetime(icustays_and_patients['INTIME'])
     icustays_and_patients['DOB'] = pd.to_datetime(icustays_and_patients['DOB'])
     icustays_and_patients['AGE'] = (icustays_and_patients['INTIME'] - icustays_and_patients['DOB']).dt.days / DAYS_IN_A_YEAR
@@ -75,9 +75,9 @@ def get_child_notes_by_icustay(spell_check):
     icu_notes = icu_under_18.merge(noteevents, left_on='SUBJECT_ID', right_on='SUBJECT_ID')
     icu_notes['CHARTTIME'] = pd.to_datetime(icu_notes['CHARTTIME'])
     icu_notes['OUTTIME'] = pd.to_datetime(icu_notes['OUTTIME'])
-    print "icu_notes.shape before filtering charttime: ", icu_notes.shape
+    print("icu_notes.shape before filtering charttime: ", icu_notes.shape)
     icu_notes = icu_notes[(icu_notes['CHARTTIME'] >= icu_notes['INTIME']) & (icu_notes['CHARTTIME'] <= icu_notes['OUTTIME'])]
-    print "icu_notes.shape after filtering charttime: ", icu_notes.shape
+    print("icu_notes.shape after filtering charttime: ", icu_notes.shape)
 
 
     if spell_check:
@@ -92,7 +92,7 @@ def get_child_notes_by_icustay(spell_check):
 
     # print "icu_notes['TEXT'].shape:",icu_notes['TEXT'].shape
 
-    print "saving text to notes_by_icustay.csv"
+    print("saving text to notes_by_icustay.csv")
 
     with open('notes_by_icustay.csv', 'w') as infile:
         writer = csv.writer(infile)
@@ -103,5 +103,5 @@ def get_child_notes_by_icustay(spell_check):
 
 if __name__ == '__main__':
     icu_notes = get_child_notes_by_icustay(spell_check=False)
-    print 'saving patients_icustays_noteevents.csv'
+    print('saving patients_icustays_noteevents.csv')
     icu_notes.to_csv('patients_icustays_noteevents.csv')

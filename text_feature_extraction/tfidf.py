@@ -19,8 +19,8 @@ custom_stop_stems is a list of stems that you don't want to include beyond the b
 custom_stop_stems = []
 
 stemmer = PorterStemmer()
-tbl = dict.fromkeys(i for i in xrange(sys.maxunicode)
-                      if unicodedata.category(unichr(i)).startswith('P'))
+tbl = dict.fromkeys(i for i in range(sys.maxunicode)
+                      if unicodedata.category(chr(i)).startswith('P'))
 
 def num_with_commas(num):
     return locale.format("%d", num, grouping=True)
@@ -54,7 +54,7 @@ def get_list_of_comments(filename):
     return result
 
 def output_tf_idf(tfidf_matrix, output_name, feature_names, doc):
-    print "open ", output_name
+    print("open ", output_name)
     with open(output_name, 'w') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(["Word", "TF-IDF"])
@@ -62,14 +62,14 @@ def output_tf_idf(tfidf_matrix, output_name, feature_names, doc):
     feature_index = tfidf_matrix[doc,:].nonzero()[1]
     tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
 
-    print "sorting ", output_name
+    print("sorting ", output_name)
     mapping = {}
     for word, score in [(feature_names[i].encode('utf-8'), s) for (i, s) in tfidf_scores]:
         mapping[word] = score
 
     sortedByValue = sorted(mapping.items(), key=operator.itemgetter(1), reverse=True)
 
-    print "writing ", output_name
+    print("writing ", output_name)
     with open(output_name, 'a') as outfile:
         writer = csv.writer(outfile)
         writer.writerows(sortedByValue[:500])
@@ -107,7 +107,7 @@ This TF-IDF method stems and removes english stop words.
 """
 
 def tf_idf(corpus_filenames_list, output_paths_list):
-    print "---------------- tf_idf ----------------"
+    print("---------------- tf_idf ----------------")
     # print "corpus: ", corpus_filenames_list
     assert len(corpus_filenames_list) == len(output_paths_list), "corpus list and output paths list are of different lengths"
     # the TF-IDF values of all the documents in the corpus
