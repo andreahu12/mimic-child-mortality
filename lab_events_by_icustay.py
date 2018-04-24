@@ -2,22 +2,7 @@ import csv
 import pandas as pd
 import numpy as np
 from tfidf import tf_idf
-import enchant
 import string
-
-d = enchant.Dict("en_US")
-
-def concat(series):
-    as_list = series.tolist()
-    #fix spelling
-    new_list = []
-    for note in as_list:
-        words = note.translate(None, string.punctuation).lower().split()
-        words = [d.suggest(word)[0] if not d.check(word) and len(d.suggest(word)) > 0 else word for word in words]
-        new_note = " ".join(words)
-        new_list.append(new_note)
-    result = " ".join(new_list)
-    return result
 
 icustays_path = '../data/ICUSTAYS.csv'
 #"ROW_ID","SUBJECT_ID","HADM_ID","ICUSTAY_ID","DBSOURCE","FIRST_CAREUNIT","LAST_CAREUNIT","FIRST_WARDID","LAST_WARDID","INTIME","OUTTIME","LOS"
