@@ -70,19 +70,15 @@ def get_child_notes_by_icustay(spell_check):
     icustays_and_patients['AGE'] = (icustays_and_patients['INTIME'] - icustays_and_patients['DOB']).dt.days / DAYS_IN_A_YEAR
     icu_under_89 = icustays_and_patients[(icustays_and_patients['AGE'] >= 0)]
 
-
     icu_under_18 = icu_under_89[icu_under_89['AGE'] < 18]
 
     icu_notes = icu_under_18.merge(noteevents, left_on='SUBJECT_ID', right_on='SUBJECT_ID')
     icu_notes['CHARTTIME'] = pd.to_datetime(icu_notes['CHARTTIME'])
     icu_notes['OUTTIME'] = pd.to_datetime(icu_notes['OUTTIME'])
-    print "icu_lab.shape before filtering charttime: ", icu_notes.shape
+    print "icu_notes.shape before filtering charttime: ", icu_notes.shape
     icu_notes = icu_notes[(icu_notes['CHARTTIME'] >= icu_notes['INTIME']) & (icu_notes['CHARTTIME'] <= icu_notes['OUTTIME'])]
     print "icu_notes.shape after filtering charttime: ", icu_notes.shape
-    print list(icu_notes)
 
-    print "shape:", icu_notes.shape
-    print "aggregating"
 
     if spell_check:
         icu_notes = icu_notes.groupby(['ICUSTAY_ID'], axis=0).agg({'TEXT':sc_concat}).reset_index()
@@ -94,8 +90,14 @@ def get_child_notes_by_icustay(spell_check):
 
     icu_notes['TEXT'] = pd.Series(data=icu_note_text)
 
+    # print "icu_notes['TEXT'].shape:",icu_notes['TEXT'].shape
+
     print "saving text to notes_by_icustay.csv"
-    icu_notes['TEXT'].to_csv('notes_by_icustay.csv')
+
+    with open('notes_by_icustay.csv', 'w') as infile:
+        writer = csv.writer(infile)
+        for text in icu_note_text:
+            writer.writerow([text])
 
     return icu_notes
 

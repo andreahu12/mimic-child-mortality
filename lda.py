@@ -132,7 +132,6 @@ def load_vectorized_icustays(filepath='vectorized-icustays-spellchecked.csv'):
 
 def tag_lda(vectorized_posts, post_json, n_components_list, term_list, \
                         check_spelling=True, write_path="lda/spell-checked/"):
-    # raise Exception("you shall not pass")
     print "lda"
     for n in n_components_list:
         print "lda with n components:", n
@@ -158,7 +157,7 @@ def lda_component_terms(filename, term_list, n_top_words=100):
         component = 0
         for row in reader:
             component += 1
-            # message = "Topic #%d: " % component
+            # filter for terms with coefficient > 1
             positive_feature_names = []
             positive_topics = []
 
@@ -173,46 +172,57 @@ def lda_component_terms(filename, term_list, n_top_words=100):
             message = [positive_feature_names[i] \
                                  for i in positive_topics.argsort()[:-n_top_words - 1:-1]]#[::-1][0:n_top_words]])
             component_terms.append(message)
-            # message += ", ".join([positive_feature_names[i] \
-            #                      for i in positive_topics.argsort()[:-n_top_words - 1:-1]])#[::-1][0:n_top_words]])
-            # print "\n", message
+
     return component_terms
 
 if __name__ == '__main__':
-    # TODO: @Francisco Tune the number of components n
-    n = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]#10 # NUMBER OF LDA COMPONENTS. PLAY WITH THIS PARAMETER UNTIL THE COMPONENTS MAKE SENSE
-    # n = [35, 40, 45, 50]
+    n = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50] # NUMBERS OF LDA COMPONENTS
     check_spelling = True
+    generate_vects = False
+    run_lda = False
 
     if check_spelling:
         path = 'notes_by_icustay_spellchecked.csv' # change this to your file
         tfidf_dir = 'tfidf/spell-checked/'
         terms = load_terms(tfidf_dir, check_spelling=check_spelling)
         vect_location = 'vectorized-icustays-spellchecked.csv'
-        vectored_posts = load_vectorized_icustays(filepath=vect_location)
-        # vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
+        if generate_vects:
+            vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
+        else:
+            vectored_posts = load_vectorized_icustays(filepath=vect_location)
 
         write_path = "lda/spell-checked/"
-        # lda_component_path = tag_lda(vectored_posts, path, n, terms, \
-        #             check_spelling=check_spelling, write_path="lda/spell-checked/")
+        if run_lda:
+            lda_component_path = tag_lda(vectored_posts, path, n, terms, \
+                        check_spelling=check_spelling, write_path="lda/spell-checked/")
+
         read_folder = 'lda/spell-checked/'
     else:
         path = 'notes_by_icustay.csv' # change this to your file
-        tfidf_dir = 'tfidf/not-checked/'
+        tfidf_dir = 'tfidf/'
         terms = load_terms(tfidf_dir, check_spelling=check_spelling)
         vect_location = 'vectorized-icustays-nospellcheck.csv'
-        vectored_posts = load_vectorized_icustays(filepath=vect_location)
-        # vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
-
-        # lda_component_path = tag_lda(vectored_posts, path, n, terms, \
-        #             check_spelling=check_spelling, write_path="lda/no-spell-check/")
-        read_folder = 'lda/no-spell-check/'
+        if generate_vects:
+            vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
+        else:
+            vectored_posts = load_vectorized_icustays(filepath=vect_location)
+        if run_lda:
+            lda_component_path = tag_lda(vectored_posts, path, n, terms, \
+                        check_spelling=check_spelling, write_path="lda/no-spell-check/")
+        read_folder = 'lda/'
     # print terms
     print "vectorizing"
 
     # vectored_posts = load_vectorized_icustays(filepath=vect_location)
     # vectored_posts = vectorize_for_lda(path, terms, vect_location, check_spelling=check_spelling)
 
-    lda_component_path = read_folder + 'lda10-components.csv'
-    components = lda_component_terms(lda_component_path, terms, n_top_words=50)
+    lda_component_path = read_folder + 'lda25-components.csv'
+    components = lda_component_terms(lda_component_path, terms, n_top_words=100000000)
     print components
+
+    print "write components to categories.csv"
+    with open('categories.csv', 'w') as outfile:
+        writer = csv.writer(outfile)
+        for c in components:
+            writer.writerow(c)
+    print "DONE!"

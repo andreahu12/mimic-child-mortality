@@ -4,7 +4,7 @@ import numpy as np
 from tfidf import tf_idf
 import enchant
 import string
-from get_text_feature import vectorize_text_feature
+from get_text_feats import vectorize_text_feature
 import math
 from get_child_notes import get_child_notes_by_icustay
 
@@ -116,8 +116,3 @@ icustay_id_to_notes = icustay_id_to_notes[['ICUSTAY_ID', 'TOPIC0', 'TOPIC1', 'TO
 print icustay_id_to_notes.describe()
 
 icustay_id_to_notes.to_csv('icustay_id_to_features.csv')
-
-# "print saving"
-# with open('notes_by_icustay2.csv', 'w') as infile:
-#     writer = csv.writer(infile)
-#     writer.writerows(icu_note_text)

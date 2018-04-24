@@ -125,9 +125,8 @@ def tf_idf(corpus_filenames_list, output_paths_list):
         output_tf_idf(tfidf_matrix, output_path, feature_names, doc)
 
 if __name__ == '__main__':
-    corpus = pd.read_csv('notes_by_icustay_spellchecked.csv', header=0, names=['text'])['text'].values #['CONTROL-DATA.txt', 'TEST-DATA.txt']
-    #tfidf-doc#.csv
-    # output_name = ['tfidf-control-stemmed-filterrecovery.csv', 'tfidf-test-stemmed-filterrecovery.csv']
+    corpus = pd.read_csv('notes_by_icustay.csv', header=0, names=['text'])['text'].values
+
     num_corpora = len(corpus)
-    output_name = ['tfidf/spell-checked/tfidf-doc'+str(i)+'.csv' for i in xrange(num_corpora)]
+    output_name = ['tfidf/tfidf-doc'+str(i)+'.csv' for i in xrange(num_corpora)]
     tf_idf(corpus, output_name)
