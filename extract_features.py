@@ -124,4 +124,14 @@ print(newborns_RDD.count())
 print(teens_RDD.first())
 print(teens_RDD.count())
 
+def toCSVLine(data):
+  return ','.join(str(d) for d in data)
+  
+new_features_RDD = features_RDD.map(toCSVLine)
+new_features_RDD.saveAsTextFile('features.csv')
 
+new_newborns_RDD = newborns_RDD.map(toCSVLine)
+new_newborns_RDD.saveAsTextFile('newborn_features.csv')
+
+new_teens_RDD = teens_RDD.map(toCSVLine)
+new_teens_RDD.saveAsTextFile('teen_features.csv')
