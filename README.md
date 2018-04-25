@@ -44,5 +44,10 @@ To generate the graphs used in our paper, in the text_feature_extraction directo
 ## Aggregating Features
 To generate aggregate features and features split by age group, run `python extract_features.py`
 
+## Parameter tuning
+To tuning the parameter for each classifiers, run 'python tuning_parameters.py'
+
 ## Classification
-To run the classifier, run `python classifier.py`
+To run classifiers on under sampling data (all ages under 18), run `python underSample_all.py`
+To run classifiers on under sampling data from newborns, run 'python underSample_newborn.py'
+To run claasifiers on over sampling data from newborns, run 'python overSample_newborn.py'
