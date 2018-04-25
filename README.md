@@ -49,5 +49,7 @@ To tuning the parameter for each classifiers, run 'python tuning_parameters.py'
 
 ## Classification
 To run classifiers on under sampling data (all ages under 18), run `python undersample_all.py`
+
 To run classifiers on under sampling data from newborns, run 'python undersample_newborn.py'
+
 To run claasifiers on over sampling data from newborns, run 'python oversample_newborn.py'
