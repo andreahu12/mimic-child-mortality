@@ -42,7 +42,7 @@ In the text_feature_extraction directory, run `get_topic_features.py`. Text gene
 To generate the graphs used in our paper, in the text_feature_extraction directory, run `python graphs.py`.
 
 ## Aggregating Features
-To generate aggregate features and features split by age group, run `python extract_features.py`
+To generate aggregate features and features split by age group, run `python extract_features.py`, run `cat * > features.txt', `cat * > newborn.txt', `cat * > teen.txt' to merge the txt file.
 
 ## Parameter tuning
 To tuning the parameter for each classifiers, run 'python tuning_parameters.py'
