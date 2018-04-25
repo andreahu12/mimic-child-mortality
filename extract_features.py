@@ -3,7 +3,6 @@ from pyspark import SparkContext, SparkConf
 import pyspark_csv as pycsv
 from pyspark.sql import SQLContext
 from datetime import datetime
-from get_text_feats import vectorize_text_feature
 
 def is_infant(dob, icu_in):
     age = compute_age(dob, icu_in)
@@ -103,6 +102,7 @@ visits_lda = visits_lda.union(visits_nonotes)
 # below is the code for obtaining a 1-hot encoding of abnormal labevents per icu stay. 6044/8200 icu stays have at least one 'abnormal' lab event
 visits_lab = children_data.join(lab_events.keyBy(lambda lab: lab.SUBJECT_ID)).filter(lambda e: is_between_lab(e[1][1].CHARTTIME, e[1][0][1].INTIME, e[1][0][1].OUTTIME))
 lab_code_map = dict(visits_lab.map(lambda lab: lab[1][1].ITEMID).distinct().zipWithIndex().collect())
+print(lab_code_map)
 visits_lab = visits_lab.map(lambda lab: (lab[1][0][1].ICUSTAY_ID, lab_code_map[lab[1][1].ITEMID], lab[1][1].FLAG)).filter(lambda lab: lab[2] == 'abnormal').groupBy(lambda l: l[0]).mapValues(lambda v: encode_set(set(v), len(lab_code_map.keys())))
 visits_nolabs = visit_ids.subtract(visits_lab.map(lambda l: l[0]))
 visits_nolabs = visits_nolabs.map(lambda l: (l, ([0] * len(lab_code_map.keys()))))
@@ -117,11 +117,11 @@ features = visits_age_gender.groupWith(visits_is_dead, visits_cpt, visits_lab,vi
 features_RDD = features.mapValues(list).map(lambda r: (r[0], unpack(r[1])))
 newborns_RDD = features_RDD.filter(lambda p: p[1][0][0] <= 1)
 teens_RDD = features_RDD.filter(lambda p: p[1][0][0] >= 14)
-print(features_RDD.first())
-print(features_RDD.count())
-print(newborns_RDD.first())
-print(newborns_RDD.count())
-print(teens_RDD.first())
-print(teens_RDD.count())
+#print(features_RDD.first())
+#print(features_RDD.count())
+#print(newborns_RDD.first())
+#print(newborns_RDD.count())
+#print(teens_RDD.first())
+#print(teens_RDD.count())
 
 

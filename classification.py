@@ -1,4 +1,4 @@
-
+import sys
 import pandas as pd
 import numpy as np
 import math
@@ -61,7 +61,7 @@ for i in range(3):
     testY = testY.astype('int')
 
     ratio = testY[np.where( testY[:] == 1)].size/float(testY.size)
-    print 'dead patients accounts for: ', ratio
+    print('dead patients accounts for: ', ratio)
 
 
 
@@ -72,34 +72,34 @@ for i in range(3):
     # AUC
     fpr, tpr, thresholds = metrics.roc_curve(testY, predY, pos_label=1)
     AUC = metrics.auc(fpr, tpr)
-    print "AUC: ", AUC
+    print("AUC: ", AUC)
     l_AUC.append(AUC)
 
     # accuracy
     accu_score = accuracy_score(testY, predY)
-    print "accuracy: ", accu_score
+    print("accuracy: ", accu_score)
     l_accu.append(accu_score)
 
     # Recall score
     rec_score = recall_score(testY, predY, average='macro')
-    print "recall score: ", rec_score
+    print("recall score: ", rec_score)
     l_rec.append(rec_score)
 
     # F1 score
     f1 = f1_score(testY, predY, average='macro')
-    print "F1 score: ", f1
+    print("F1 score: ", f1)
     l_f1.append(f1)
 
     # tn, fp, fn, tp
     tn, fp, fn, tp = confusion_matrix(testY, predY).ravel()
-    print "tn, fp, fn, tp: ", tn, fp, fn, tp
+    print("tn, fp, fn, tp: ", tn, fp, fn, tp)
     l_tn.append(tn)
     l_fp.append(fp)
     l_fn.append(fn)
     l_tp.append(tp)
 
 
-print np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp)
+print(np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp))
 
 
 
@@ -153,7 +153,7 @@ for i in range(3):
     testY = testY.astype('int')
 
     ratio = testY[np.where( testY[:] == 1)].size/float(testY.size)
-    print 'dead patients accounts for: ', ratio
+    print('dead patients accounts for: ', ratio)
 
 
     ########## Logistic Regression @#############
@@ -165,36 +165,36 @@ for i in range(3):
     # AUC
     fpr, tpr, thresholds = metrics.roc_curve(testY, predY_LR, pos_label=1)
     AUC = metrics.auc(fpr, tpr)
-    print "AUC: ", AUC
+    print("AUC: ", AUC)
     l_AUC.append(AUC)
 
     # accuracy
     accu_score = accuracy_score(testY, predY_LR)
-    print "accuracy: ", accu_score
+    print("accuracy: ", accu_score)
     l_accu.append(accu_score)
 
     # Recall score
     testY = testY.astype('int')
     rec_score = recall_score(testY, predY_LR, average='weighted')
-    print "recall score: ", rec_score
+    print("recall score: ", rec_score)
     l_rec.append(rec_score)
 
 
     # F1 score
     f1 = f1_score(testY, predY_LR, average='macro')
-    print "F1 score: ", f1
+    print("F1 score: ", f1)
     l_f1.append(f1)
 
 
     # tn, fp, fn, tp
     tn, fp, fn, tp = confusion_matrix(testY, predY_LR).ravel()
-    print "tn, fp, fn, tp: ", tn, fp, fn, tp
+    print("tn, fp, fn, tp: ", tn, fp, fn, tp)
     l_tn.append(tn)
     l_fp.append(fp)
     l_fn.append(fn)
     l_tp.append(tp)
 
-print np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp)
+print(np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp))
 
 
 
@@ -227,11 +227,11 @@ for i in range(3):
     dead_patients = data[np.where( data[:,2] == 1)]
 
     alive_patients = data[np.where( data[:,2] == 0)]
-    np.random.shuffle(alive_patients)
+    #np.random.shuffle(alive_patients)
     alive_patients = alive_patients[:73] #randomly select same number of patients as that of dead data.
 
     bal_data = np.concatenate((dead_patients, alive_patients), axis=0) # dataset contains balanced data.
-    np.random.shuffle(bal_data)
+    #np.random.shuffle(bal_data)
 
     feature = np.delete(bal_data, 2, 1)
     label = bal_data[:, 2]
@@ -247,58 +247,61 @@ for i in range(3):
     testY = testY.astype('int')
 
     ratio = testY[np.where( testY[:] == 1)].size/float(testY.size)
-    print 'dead patients accounts for: ', ratio
+    print('dead patients accounts for: ', ratio)
 
     ########## Random Forest @#############
-    clf = RandomForestClassifier(n_estimators=10)
+    clf = RandomForestClassifier(n_estimators=10, random_state = 0)
     clf.fit(trainX, trainY)
     predY_RF = clf.predict(testX)
     if graph:
         importances = clf.feature_importances_
         std = np.std(clf.feature_importances_,axis=0)
         indices = np.argsort(importances)[::-1][:10]
+        print("THESE ARE INDICES" + str(indices))
+        names = ['AB - Hemoglobin', 'AB - Ventilator', 'LDA - Car Accident ', 'AB - Nucleated RBC', 'AB - Protein S, Functional', 'LDA - Skin Abnormality', 'AB - Polys', 'LDA - Pelvis', 'AB - Myoglobin, Urine', 'AB - Platelet Count']
 
         plt.figure()
         plt.title("Feature importances")
-        plt.bar(range(10), importances[indices],
+        plt.barh(range(10), importances[indices],
             color="r",  align="center")
-        plt.xticks(range(10), indices)
-        plt.xlim([-1, 10])
-        plt.xlabel('Feature #')
-        plt.ylabel('Correlaion Score')
+        plt.yticks(range(10), names)
+        plt.ylim([-1, 10])
+        plt.ylabel('Feature #')
+        plt.xlabel('Correlation Score')
         plt.show()
         graph = False
+    sys.exit(1)
 
     # AUC
     fpr, tpr, thresholds = metrics.roc_curve(testY, predY_RF, pos_label=1)
     AUC = metrics.auc(fpr, tpr)
-    print "AUC: ", AUC
+    print("AUC: ", AUC)
     l_AUC.append(AUC)
 
     # accuracy
     accu_score = accuracy_score(testY, predY_RF)
-    print "accuracy: ", accu_score
+    print("accuracy: ", accu_score)
     l_accu.append(accu_score)
 
     # Recall score
     rec_score = recall_score(testY, predY_RF, average='macro')
-    print "recall score: ", rec_score
+    print("recall score: ", rec_score)
     l_rec.append(rec_score)
 
 
     # F1 score
     f1 = f1_score(testY, predY_RF, average='macro')
-    print "F1 score: ", f1
+    print("F1 score: ", f1)
     l_f1.append(f1)
 
 
     # tn, fp, fn, tp
     tn, fp, fn, tp = confusion_matrix(testY, predY_RF).ravel()
-    print "tn, fp, fn, tp: ", tn, fp, fn, tp
+    print("tn, fp, fn, tp: ", tn, fp, fn, tp)
     l_tn.append(tn)
     l_fp.append(fp)
     l_fn.append(fn)
     l_tp.append(tp)
 
-print np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp)
+print(np.mean(l_AUC), np.mean(l_accu), np.mean(l_rec), np.mean(l_f1), np.mean(l_tn), np.mean(l_fp),np.mean(l_fn), np.mean(l_tp))
 

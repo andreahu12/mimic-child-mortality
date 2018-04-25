@@ -6,7 +6,6 @@ import matplotlib.ticker as plticker
 import matplotlib.pyplot as plt
 plt.rcdefaults()
 import matplotlib.mlab as mlab
-from sets import Set
 import csv
 import numpy as np
 from matplotlib import pyplot
